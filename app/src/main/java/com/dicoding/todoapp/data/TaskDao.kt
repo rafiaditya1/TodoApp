@@ -6,6 +6,7 @@ import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 
 //TODO 2 : Define data access object (DAO)
+@Dao
 interface TaskDao {
 
     @RawQuery(observedEntities = [Task::class])
@@ -28,5 +29,4 @@ interface TaskDao {
 
     @Query("UPDATE tasks SET completed = :completed WHERE id = :taskId")
     suspend fun updateCompleted(taskId: Int, completed: Boolean)
-    
 }

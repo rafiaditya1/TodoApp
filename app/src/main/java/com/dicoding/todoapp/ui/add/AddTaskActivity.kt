@@ -6,13 +6,18 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.dicoding.todoapp.R
+import com.dicoding.todoapp.data.Task
+import com.dicoding.todoapp.ui.ViewModelFactory
 import com.dicoding.todoapp.utils.DatePickerFragment
+import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListener {
     private var dueDateMillis: Long = System.currentTimeMillis()
+    private lateinit var addTaskViewModel: AddTaskViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +25,8 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
 
         supportActionBar?.title = getString(R.string.add_task)
 
+        val viewModelFactory = ViewModelFactory.getInstance(this)
+        addTaskViewModel = ViewModelProvider(this, viewModelFactory)[AddTaskViewModel::class.java]
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -31,6 +38,15 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
         return when (item.itemId) {
             R.id.action_save -> {
                 //TODO 12 : Create AddTaskViewModel and insert new task to database
+                val edtTitle = findViewById<TextInputEditText>(R.id.add_ed_title)
+                val edtDescription = findViewById<TextInputEditText>(R.id.add_ed_description)
+                val taskTitle = edtTitle.text.toString()
+                val taskDescription = edtDescription.text.toString()
+                val addTask = Task(0, taskTitle, taskDescription, dueDateMillis, false)
+
+                addTaskViewModel.insertTask(addTask)
+                onBackPressed()
+
                 true
             }
             else -> super.onOptionsItemSelected(item)
